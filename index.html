@@ -276,7 +276,7 @@
   }
   .dash-frame iframe{
     width:100%;
-    height:480px;
+    height:1800px;
     border:0;
     display:block;
   }
@@ -397,7 +397,7 @@
         <div class="readout-value">1 · 2 · 3</div>
       </div>
       <div class="readout-cell">
-        <div class="readout-label"><span class="dot"></span>AIR TEMP</div>
+        <div class="readout-label"><span class="dot"></span>AIR TEMP HIGH</div>
         <div class="readout-value" id="airTemp" style="font-size:14px;color:var(--cream-dim);">—</div>
       </div>
       <div class="readout-cell">
@@ -469,8 +469,8 @@
       </div>
     </div>
 
-    <a class="archive-link" href="https://farmprotocols.notion.site/Farm-Protocols-3012cd42c7a58069a817f3702409b7de" target="_blank" rel="noopener">
-      <span class="dot"></span> Full data archive and methodology
+    <a class="archive-link" href="https://farmprotocols.notion.site/The-Project-3572cd42c7a58014af4ae09a7ac8936e" target="_blank" rel="noopener">
+      <span class="dot"></span> Project overview
     </a>
   </section>
 
@@ -552,11 +552,11 @@
   //    match wins. Add your exact header text if it's not already here.
   // ------------------------------------------------------------
 
-  var CSV_URL = 'REPLACE_WITH_YOUR_PUBLISHED_CSV_URL';
+  var CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRCaGAl2h-6zRMujxqHH9OobJUCK6S-IAQo9wK_low2kUQeIq22V0rqEqyRZ8E3CJvC5c__Ev7e2-zd/pub?gid=322790927&single=true&output=csv';
 
   var FIELD_MAP = {
     date:     ['Date'],
-    airTemp:  ['Air Temp High', 'Air Temp (°F)', 'Air Temp'],
+    airTemp:  ['Air Temp High (°F)', 'Air Temp High', 'Air Temp (°F)', 'Air Temp'],
     rainfall: ['Rainfall (in)', 'Rainfall']
   };
 
