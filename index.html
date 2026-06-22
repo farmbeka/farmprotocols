@@ -256,34 +256,35 @@
     margin-top:24px;
   }
 
-  /* live data / dashboard embed */
-  .dash-panel{
-    border:1px dashed var(--line-strong);
+  /* live data / dashboard embeds */
+  .dash-block{
+    margin-bottom:28px;
+  }
+  .dash-label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.08em;
+    color:var(--gold);
+    text-transform:uppercase;
+    margin-bottom:10px;
+  }
+  .dash-frame{
+    border:1px solid var(--line-strong);
     border-radius:12px;
     background:var(--bg-soft);
-    padding:48px 32px;
-    text-align:center;
+    overflow:hidden;
   }
-  .dash-panel .dash-msg{
-    font-family:'IBM Plex Mono',monospace;
-    font-size:12px;
-    color:var(--cream-dim);
-    letter-spacing:0.03em;
-    line-height:1.8;
-  }
-  .dash-panel .dash-msg strong{color:var(--green);}
-  .dash-panel iframe{
+  .dash-frame iframe{
     width:100%;
     height:480px;
     border:0;
-    border-radius:8px;
-    display:none; /* flip to block once a real src is set below */
+    display:block;
   }
   .archive-link{
     display:inline-flex;
     align-items:center;
     gap:8px;
-    margin-top:22px;
+    margin-top:8px;
     font-family:'IBM Plex Mono',monospace;
     font-size:12px;
     color:var(--green);
@@ -453,22 +454,24 @@
       <span class="section-title">Live Data</span>
       <span class="section-note">Posted as it comes in</span>
     </div>
-    <div class="dash-panel">
-      <!--
-        TODO: paste your Looker Studio embed code here.
-        1. Set the iframe src below to your real embed URL.
-        2. Change the iframe's display from none to block in the CSS above.
-        3. Delete or hide the .dash-msg placeholder text once it's live.
-      -->
-      <iframe src="REPLACE_WITH_LOOKER_STUDIO_EMBED_URL" title="Farm Protocols dashboard" loading="lazy"></iframe>
-      <p class="dash-msg">
-        Live dashboard renders here.<br>
-        <strong>Swap in your Looker Studio embed link</strong> in the page code.
-      </p>
-      <a class="archive-link" href="https://farmprotocols.notion.site/Farm-Protocols-3012cd42c7a58069a817f3702409b7de" target="_blank" rel="noopener">
-        <span class="dot"></span> Full data archive and methodology
-      </a>
+
+    <div class="dash-block">
+      <div class="dash-label">Season Dashboard</div>
+      <div class="dash-frame">
+        <iframe src="https://datastudio.google.com/embed/reporting/3d536d00-9175-4807-8aa4-ada0cdf3bb3b/page/9nzsF" title="Farm Protocols season dashboard" frameborder="0" allowfullscreen sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox" loading="lazy"></iframe>
+      </div>
     </div>
+
+    <div class="dash-block">
+      <div class="dash-label">Soil &amp; Water Lab Results</div>
+      <div class="dash-frame">
+        <iframe src="https://datastudio.google.com/embed/reporting/a2601b38-d25a-4064-b90d-01ad8c6af738/page/p_wnduids21d" title="Farm Protocols soil and water lab results" frameborder="0" allowfullscreen sandbox="allow-storage-access-by-user-activation allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox" loading="lazy"></iframe>
+      </div>
+    </div>
+
+    <a class="archive-link" href="https://farmprotocols.notion.site/Farm-Protocols-3012cd42c7a58069a817f3702409b7de" target="_blank" rel="noopener">
+      <span class="dot"></span> Full data archive and methodology
+    </a>
   </section>
 
   <section id="writing">
