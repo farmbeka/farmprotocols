@@ -327,6 +327,36 @@
     margin-top:6px;
   }
 
+  /* from the field gallery */
+  .field-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:14px;
+  }
+  .field-tile{
+    position:relative;
+    aspect-ratio:1/1;
+    overflow:hidden;
+    border-radius:8px;
+    background:var(--bg-soft);
+  }
+  .field-tile img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+    transition:transform 0.4s ease;
+  }
+  .field-tile:hover img{
+    transform:scale(1.04);
+  }
+  @media (max-width:900px){
+    .field-grid{grid-template-columns:repeat(2,1fr);}
+  }
+  @media (max-width:520px){
+    .field-grid{grid-template-columns:1fr 1fr;gap:10px;}
+  }
+
   /* footer */
   footer{
     padding:48px 0 64px;
@@ -364,6 +394,7 @@
     <div class="nav-links">
       <a href="#experiment">EXPERIMENT</a>
       <a href="#live-data">LIVE DATA</a>
+      <a href="#field">FIELD</a>
       <a href="#writing">WRITING</a>
     </div>
   </nav>
@@ -508,6 +539,32 @@
         </div>
       </li>
     </ul>
+  </section>
+
+  <section id="field">
+    <div class="field-grid">
+      <div class="field-tile">
+        <img src="photos/mushroom-oyster.jpg" alt="A cluster of golden oyster mushrooms growing in the woods">
+      </div>
+      <div class="field-tile">
+        <img src="photos/mushroom-shiitake.jpg" alt="A single shiitake mushroom fruiting on a log">
+      </div>
+      <div class="field-tile">
+        <img src="photos/soil-sampling.jpg" alt="Soil sample cups next to a moisture meter and a field notebook">
+      </div>
+      <div class="field-tile">
+        <img src="photos/tomato-staked.jpg" alt="A young tomato plant staked in the bed">
+      </div>
+      <div class="field-tile">
+        <img src="photos/lettuce-rows.jpg" alt="Overhead view of rows of lettuce, bok choy, and arugula">
+      </div>
+      <div class="field-tile">
+        <img src="photos/mulch-truck.jpg" alt="A truck bed loaded with wood chip mulch">
+      </div>
+      <div class="field-tile">
+        <img src="photos/field-wide.jpg" alt="A wide view of the field under blue sky, lettuce in the foreground">
+      </div>
+    </div>
   </section>
 
   <footer>
