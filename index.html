@@ -508,7 +508,240 @@
       <span class="dot"></span> Project overview
     </a>
   </section>
-
+<!--
+  ============================================================
+  FIELD LOG PREVIEW BLOCK — embeddable snippet
+  ============================================================
+  Drop this whole block into the homepage wherever the field
+  log preview should sit (recommended: below the dashboards,
+  above the photo gallery).
+ 
+  Styled to match the site's existing tokens: --bg, --cream,
+  --green, --gold, --blue defined in the main index.html
+  stylesheet. If those variables already exist globally on the
+  page, you can delete the :root block below to avoid
+  redeclaring them; harmless either way since the values match.
+ 
+  Pulls the 3 most recent published entries from the same
+  Experiment Observations CSV used by field-log.html, so there
+  is only one place to update: the Google Sheet itself.
+ 
+  Requires PapaParse, already loaded below. If the homepage
+  already loads PapaParse elsewhere, remove the duplicate
+  <script> tag to avoid loading it twice.
+  ============================================================
+-->
+ 
+<style>
+  :root{
+    --fp-bg-soft:#101b14;
+    --fp-green:#4ADE80;
+    --fp-gold:#A0845C;
+    --fp-cream:#F2EFE6;
+    --fp-cream-dim:#9CA39B;
+    --fp-blue:#38BDF8;
+    --fp-grey:#888780;
+    --fp-line:rgba(242,239,230,0.10);
+    --fp-line-strong:rgba(242,239,230,0.18);
+  }
+ 
+  .fp-preview-wrap {
+    background: var(--fp-bg-soft);
+    border-radius: 12px;
+    padding: 28px 32px;
+    font-family: 'Lora', Georgia, serif;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+ 
+  .fp-preview-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--fp-line);
+    padding-bottom: 14px;
+  }
+ 
+  .fp-preview-title {
+    font-family: 'DM Sans', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.22em;
+    color: var(--fp-green);
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+ 
+  .fp-preview-link {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--fp-cream-dim);
+    letter-spacing: 0.04em;
+    text-decoration: none;
+    border-bottom: 0.5px solid var(--fp-line-strong);
+    padding-bottom: 1px;
+  }
+  .fp-preview-link:hover { color: var(--fp-green); border-color: var(--fp-green); }
+ 
+  .fp-preview-entry {
+    display: flex;
+    gap: 18px;
+    margin-bottom: 18px;
+    padding-bottom: 18px;
+    border-bottom: 1px solid var(--fp-line);
+  }
+  .fp-preview-entry:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+ 
+  .fp-preview-datecol { min-width: 66px; flex-shrink: 0; }
+  .fp-preview-date {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--fp-cream-dim);
+    letter-spacing: 0.03em;
+    line-height: 1.5;
+  }
+ 
+  .fp-preview-body { flex: 1; min-width: 0; }
+ 
+  .fp-preview-tags {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+ 
+  .fp-tag {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 2px 8px;
+    border-radius: 3px;
+    border: 0.5px solid;
+  }
+  .fp-tag-zone1 { background: rgba(136,135,128,0.10); color: var(--fp-grey); border-color: rgba(136,135,128,0.3); }
+  .fp-tag-zone2 { background: rgba(56,189,248,0.10); color: var(--fp-blue); border-color: rgba(56,189,248,0.3); }
+  .fp-tag-zone3 { background: rgba(74,222,128,0.10); color: var(--fp-green); border-color: rgba(74,222,128,0.3); }
+  .fp-tag-zoneall { background: rgba(136,135,128,0.10); color: var(--fp-grey); border-color: rgba(136,135,128,0.3); }
+ 
+  .fp-preview-note {
+    font-family: 'Lora', Georgia, serif;
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--fp-cream);
+    line-height: 1.75;
+  }
+ 
+  .fp-preview-state {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: var(--fp-cream-dim);
+    text-align: center;
+    padding: 24px 0;
+    letter-spacing: 0.04em;
+  }
+ 
+  .fp-hidden { display: none; }
+</style>
+ 
+<div class="fp-preview-wrap">
+  <div class="fp-preview-header">
+    <span class="fp-preview-title">Field log</span>
+    <a href="/field-log.html" class="fp-preview-link">view full log &rarr;</a>
+  </div>
+ 
+  <div id="fp-preview-feed"></div>
+  <div id="fp-preview-loading" class="fp-preview-state">loading recent entries&hellip;</div>
+  <div id="fp-preview-empty" class="fp-preview-state fp-hidden">no entries logged yet</div>
+</div>
+ 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script>
+(function() {
+  const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRCaGAl2h-6zRMujxqHH9OobJUCK6S-IAQo9wK_low2kUQeIq22V0rqEqyRZ8E3CJvC5c__Ev7e2-zd/pub?gid=834922159&single=true&output=csv";
+  const PREVIEW_COUNT = 3;
+ 
+  const zoneTagClass = {
+    "Zone 1": "fp-tag-zone1",
+    "Zone 2": "fp-tag-zone2",
+    "Zone 3": "fp-tag-zone3"
+  };
+ 
+  function parseZones(zoneField) {
+    const zones = [];
+    ["Zone 1", "Zone 2", "Zone 3"].forEach(z => {
+      if (zoneField.includes(z) || zoneField.toLowerCase().includes("all zone")) {
+        zones.push(z);
+      }
+    });
+    if (zoneField.toLowerCase().includes("all zone") && zones.length === 0) {
+      return ["Zone 1", "Zone 2", "Zone 3"];
+    }
+    return zones;
+  }
+ 
+  function formatDate(dateStr) {
+    const d = new Date(dateStr);
+    if (isNaN(d)) return dateStr;
+    const month = d.toLocaleString('en-US', { month: 'short' });
+    return `${month} ${d.getDate()}, ${d.getFullYear()}`;
+  }
+ 
+  function renderZoneTags(zones) {
+    if (zones.length === 0 || zones.length === 3) {
+      return `<span class="fp-tag fp-tag-zoneall">All zones</span>`;
+    }
+    return zones.map(z => `<span class="fp-tag ${zoneTagClass[z]}">${z}</span>`).join("");
+  }
+ 
+  Papa.parse(CSV_URL, {
+    download: true,
+    header: true,
+    skipEmptyLines: true,
+    complete: function(results) {
+      document.getElementById("fp-preview-loading").classList.add("hidden");
+ 
+      const entries = results.data
+        .filter(row => (row["Publish"] || "").trim().toUpperCase() === "Y")
+        .map(row => ({
+          date: row["Date"] || "",
+          zones: parseZones(row["Zone"] || ""),
+          notes: row["Notes"] || row["Measurement / Value"] || ""
+        }))
+        .filter(e => e.date && e.notes)
+        .sort((a, b) => new Date(b.date) - new Date(a.date))
+        .slice(0, PREVIEW_COUNT);
+ 
+      const feed = document.getElementById("fp-preview-feed");
+ 
+      if (entries.length === 0) {
+        document.getElementById("fp-preview-empty").classList.remove("fp-hidden");
+        return;
+      }
+ 
+      feed.innerHTML = entries.map(e => `
+        <div class="fp-preview-entry">
+          <div class="fp-preview-datecol">
+            <div class="fp-preview-date">${formatDate(e.date)}</div>
+          </div>
+          <div class="fp-preview-body">
+            <div class="fp-preview-tags">${renderZoneTags(e.zones)}</div>
+            <p class="fp-preview-note">${e.notes}</p>
+          </div>
+        </div>
+      `).join("");
+    },
+    error: function() {
+      document.getElementById("fp-preview-loading").textContent =
+        "could not load recent entries right now";
+    }
+  });
+})();
+</script>
   <section id="writing">
     <div class="section-head">
       <span class="section-title">Latest Writing</span>
