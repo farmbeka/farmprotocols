@@ -706,7 +706,10 @@
       document.getElementById("fp-preview-loading").classList.add("hidden");
  
       const entries = results.data
-        .filter(row => (row["Publish"] || "").trim().toUpperCase() === "Y")
+        .filter(row => {
+  const pub = Object.entries(row).find(([k]) => k.trim() === "Publish");
+  return pub && pub[1].trim().toUpperCase() === "Y";
+})
         .map(row => ({
           date: row["Date"] || "",
           zones: parseZones(row["Zone"] || ""),
