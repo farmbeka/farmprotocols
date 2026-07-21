@@ -383,6 +383,96 @@
     color:var(--cream-dim);
     letter-spacing:0.04em;
   }
+
+  /* ---------- FIELD LOG PREVIEW ---------- */
+  .fp-preview-wrap {
+    background: #0b1209;
+    border-radius: 12px;
+    padding: 28px 32px;
+    font-family: 'DM Mono', monospace, sans-serif;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  .fp-preview-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    border-bottom: 0.5px solid #131f11;
+    padding-bottom: 14px;
+  }
+
+  .fp-preview-title {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    color: #4ADE80;
+    text-transform: uppercase;
+    font-weight: 500;
+  }
+
+  .fp-preview-link {
+    font-size: 11px;
+    color: #3d5c38;
+    letter-spacing: 0.06em;
+    text-decoration: none;
+    border-bottom: 0.5px solid #1e3a1a;
+    padding-bottom: 1px;
+  }
+  .fp-preview-link:hover { color: #4ADE80; border-color: #4ADE80; }
+
+  .fp-preview-entry {
+    display: flex;
+    gap: 18px;
+    margin-bottom: 18px;
+    padding-bottom: 18px;
+    border-bottom: 0.5px solid #131f11;
+  }
+  .fp-preview-entry:last-child {
+    margin-bottom: 0;
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+
+  .fp-preview-datecol { min-width: 66px; flex-shrink: 0; }
+  .fp-preview-date {
+    font-size: 11px;
+    color: #3d5c38;
+    letter-spacing: 0.05em;
+    line-height: 1.5;
+  }
+
+  .fp-preview-body { flex: 1; min-width: 0; }
+
+  .fp-preview-tags {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+  }
+
+  .fp-tag-zone1 { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; padding: 2px 8px; border-radius: 3px; background: #1a1a17; color: #888780; border: 0.5px solid #333330; }
+  .fp-tag-zone2 { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; padding: 2px 8px; border-radius: 3px; background: #0e2410; color: #4ADE80; border: 0.5px solid #1e3a1a; }
+  .fp-tag-zone3 { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; padding: 2px 8px; border-radius: 3px; background: #1f1500; color: #EF9F27; border: 0.5px solid #3a2800; }
+  .fp-tag-zoneall { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; padding: 2px 8px; border-radius: 3px; background: #1a1a17; color: #888780; border: 0.5px solid #333330; }
+
+  .fp-preview-note {
+    font-family: 'Lora', Georgia, serif;
+    font-size: 13px;
+    font-weight: 300;
+    color: #a8c6a2;
+    line-height: 1.75;
+  }
+
+  .fp-preview-state {
+    font-size: 12px;
+    color: #2a4a26;
+    text-align: center;
+    padding: 24px 0;
+    letter-spacing: 0.06em;
+  }
+
+  .fp-hidden { display: none; }
 </style>
 </head>
 <body>
@@ -394,7 +484,8 @@
     <div class="nav-links">
       <a href="#experiment">EXPERIMENT</a>
       <a href="#live-data">LIVE DATA</a>
-      <a href="#field">FIELD</a>
+      <a href="#field-log">FIELD LOG</a>
+      <a href="#field">FIELD PHOTOS</a>
       <a href="#writing">WRITING</a>
     </div>
   </nav>
@@ -508,6 +599,28 @@
       <span class="dot"></span> Project overview
     </a>
   </section>
+
+  <!-- ============================================================
+       FIELD LOG PREVIEW BLOCK — restored
+       ============================================================
+       Pulls the 3 most recent published entries from the same
+       Experiment Observations CSV used by field-log.html. Only
+       one place to update: the Google Sheet Publish column.
+       Fixed bug: loading message now correctly hides itself using
+       the fp-hidden class (was previously calling classList.add
+       ("hidden"), which doesn't exist in this stylesheet and left
+       the loading text stuck on screen).
+       ============================================================ -->
+  <div class="fp-preview-wrap" id="field-log">
+    <div class="fp-preview-header">
+      <span class="fp-preview-title">Field log</span>
+      <a href="/field-log.html" class="fp-preview-link">view full log &rarr;</a>
+    </div>
+
+    <div id="fp-preview-feed"></div>
+    <div id="fp-preview-loading" class="fp-preview-state">loading recent entries&hellip;</div>
+    <div id="fp-preview-empty" class="fp-preview-state fp-hidden">no entries logged yet</div>
+  </div>
 
   <section id="writing">
     <div class="section-head">
@@ -720,6 +833,95 @@
   }
 
   loadLiveData();
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script>
+  // ============================================================
+  // FIELD LOG PREVIEW — pulls from Experiment Observations tab
+  // ============================================================
+  (function() {
+    const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vRCaGAl2h-6zRMujxqHH9OobJUCK6S-IAQo9wK_low2kUQeIq22V0rqEqyRZ8E3CJvC5c__Ev7e2-zd/pub?gid=834922159&single=true&output=csv";
+    const PREVIEW_COUNT = 3;
+
+    const zoneTagClass = {
+      "Zone 1": "fp-tag-zone1",
+      "Zone 2": "fp-tag-zone2",
+      "Zone 3": "fp-tag-zone3"
+    };
+
+    function parseZones(zoneField) {
+      const zones = [];
+      ["Zone 1", "Zone 2", "Zone 3"].forEach(z => {
+        if (zoneField.includes(z) || zoneField.toLowerCase().includes("all zone")) {
+          zones.push(z);
+        }
+      });
+      if (zoneField.toLowerCase().includes("all zone") && zones.length === 0) {
+        return ["Zone 1", "Zone 2", "Zone 3"];
+      }
+      return zones;
+    }
+
+    function formatDate(dateStr) {
+      const d = new Date(dateStr);
+      if (isNaN(d)) return dateStr;
+      const month = d.toLocaleString('en-US', { month: 'short' });
+      return `${month} ${d.getDate()}, ${d.getFullYear()}`;
+    }
+
+    function renderZoneTags(zones) {
+      if (zones.length === 0 || zones.length === 3) {
+        return `<span class="fp-tag-zoneall">All zones</span>`;
+      }
+      return zones.map(z => `<span class="${zoneTagClass[z]}">${z}</span>`).join("");
+    }
+
+    Papa.parse(CSV_URL, {
+      download: true,
+      header: true,
+      skipEmptyLines: true,
+      complete: function(results) {
+        // Fixed: was classList.add("hidden"), which doesn't exist in
+        // this stylesheet. Now correctly uses fp-hidden.
+        document.getElementById("fp-preview-loading").classList.add("fp-hidden");
+
+        const entries = results.data
+          .filter(row => (row["Publish"] || "").trim().toUpperCase() === "Y")
+          .map(row => ({
+            date: row["Date"] || "",
+            zones: parseZones(row["Zone"] || ""),
+            notes: row["Notes"] || row["Measurement / Value"] || ""
+          }))
+          .filter(e => e.date && e.notes)
+          .sort((a, b) => new Date(b.date) - new Date(a.date))
+          .slice(0, PREVIEW_COUNT);
+
+        const feed = document.getElementById("fp-preview-feed");
+
+        if (entries.length === 0) {
+          document.getElementById("fp-preview-empty").classList.remove("fp-hidden");
+          return;
+        }
+
+        feed.innerHTML = entries.map(e => `
+          <div class="fp-preview-entry">
+            <div class="fp-preview-datecol">
+              <div class="fp-preview-date">${formatDate(e.date)}</div>
+            </div>
+            <div class="fp-preview-body">
+              <div class="fp-preview-tags">${renderZoneTags(e.zones)}</div>
+              <p class="fp-preview-note">${e.notes}</p>
+            </div>
+          </div>
+        `).join("");
+      },
+      error: function() {
+        document.getElementById("fp-preview-loading").textContent =
+          "could not load recent entries right now";
+      }
+    });
+  })();
 </script>
 
 </body>
