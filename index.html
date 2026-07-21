@@ -393,26 +393,6 @@
     margin-bottom: 8px;
   }
 
-  .fp-card-header {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    margin-bottom: 22px;
-    padding-bottom: 16px;
-    border-bottom: 1px solid var(--line);
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .fp-card-title {
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 700;
-    font-size: 12px;
-    letter-spacing: 0.18em;
-    color: var(--cream);
-    text-transform: uppercase;
-  }
-
   .fp-preview-link {
     font-family:'IBM Plex Mono',monospace;
     font-size:11.5px;
@@ -599,23 +579,27 @@
   </section>
 
   <!-- ============================================================
-       FIELD LOG — standalone light card, positioned above Live Data
+       FIELD LOG — standalone card, positioned above Live Data
        ============================================================
        Pulls the 3 most recent published entries from the same
        Experiment Observations CSV used by field-log.html. Only
        one place to update: the Google Sheet Publish column.
        ============================================================ -->
   <section id="field-log">
-    <div class="fp-card">
-      <div class="fp-card-header">
-        <span class="fp-card-title">Field Log</span>
-        <a href="/field-log.html" class="fp-preview-link">view full log &rarr;</a>
-      </div>
+    <div class="section-head">
+      <span class="section-title">Field Log</span>
+      <span class="section-note">What's happening out here</span>
+    </div>
 
+    <div class="fp-card">
       <div id="fp-preview-feed"></div>
       <div id="fp-preview-loading" class="fp-preview-state">loading recent entries&hellip;</div>
       <div id="fp-preview-empty" class="fp-preview-state fp-hidden">no entries logged yet</div>
     </div>
+
+    <a class="archive-link" href="/field-log.html">
+      <span class="dot"></span> View full field log
+    </a>
   </section>
 
   <section id="live-data">
