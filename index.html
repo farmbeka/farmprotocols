@@ -384,61 +384,30 @@
     letter-spacing:0.04em;
   }
 
-  /* ---------- FIELD LOG PREVIEW ---------- */
-  .fp-preview-wrap {
-    background: #0b1209;
-    border-radius: 12px;
-    padding: 28px 32px;
-    font-family: 'DM Mono', monospace, sans-serif;
-    max-width: 760px;
-    margin: 0 auto;
-  }
-
-  .fp-preview-header {
-    display: flex;
-    align-items: baseline;
-    justify-content: space-between;
-    margin-bottom: 20px;
-    border-bottom: 0.5px solid #131f11;
-    padding-bottom: 14px;
-  }
-
-  .fp-preview-title {
-    font-size: 11px;
-    letter-spacing: 0.22em;
-    color: #4ADE80;
-    text-transform: uppercase;
-    font-weight: 500;
-  }
-
+  /* ---------- FIELD LOG PREVIEW (matches site section styling) ---------- */
   .fp-preview-link {
-    font-size: 11px;
-    color: #3d5c38;
-    letter-spacing: 0.06em;
-    text-decoration: none;
-    border-bottom: 0.5px solid #1e3a1a;
-    padding-bottom: 1px;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:12px;
+    color:var(--green);
+    letter-spacing:0.04em;
+    text-decoration:none;
   }
-  .fp-preview-link:hover { color: #4ADE80; border-color: #4ADE80; }
+  .fp-preview-link:hover{color:var(--cream);}
 
   .fp-preview-entry {
     display: flex;
-    gap: 18px;
-    margin-bottom: 18px;
-    padding-bottom: 18px;
-    border-bottom: 0.5px solid #131f11;
+    gap: 20px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--line);
   }
-  .fp-preview-entry:last-child {
-    margin-bottom: 0;
-    padding-bottom: 0;
-    border-bottom: none;
-  }
+  .fp-preview-entry:last-child{ border-bottom: none; }
 
-  .fp-preview-datecol { min-width: 66px; flex-shrink: 0; }
+  .fp-preview-datecol { min-width: 70px; flex-shrink: 0; }
   .fp-preview-date {
+    font-family:'IBM Plex Mono',monospace;
     font-size: 11px;
-    color: #3d5c38;
-    letter-spacing: 0.05em;
+    color: var(--cream-dim);
+    letter-spacing: 0.03em;
     line-height: 1.5;
   }
 
@@ -451,25 +420,33 @@
     flex-wrap: wrap;
   }
 
-  .fp-tag-zone1 { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; padding: 2px 8px; border-radius: 3px; background: #1a1a17; color: #888780; border: 0.5px solid #333330; }
-  .fp-tag-zone2 { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; padding: 2px 8px; border-radius: 3px; background: #0e2410; color: #4ADE80; border: 0.5px solid #1e3a1a; }
-  .fp-tag-zone3 { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; padding: 2px 8px; border-radius: 3px; background: #1f1500; color: #EF9F27; border: 0.5px solid #3a2800; }
-  .fp-tag-zoneall { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; padding: 2px 8px; border-radius: 3px; background: #1a1a17; color: #888780; border: 0.5px solid #333330; }
+  .fp-preview-tags span{
+    font-family:'IBM Plex Mono',monospace;
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 3px;
+    border: 0.5px solid;
+  }
+  .fp-tag-zone1 { background: rgba(156,163,155,0.10); color: var(--cream-dim); border-color: rgba(156,163,155,0.3); }
+  .fp-tag-zone2 { background: rgba(91,159,224,0.10); color: var(--blue); border-color: rgba(91,159,224,0.3); }
+  .fp-tag-zone3 { background: rgba(74,222,128,0.10); color: var(--green); border-color: rgba(74,222,128,0.3); }
+  .fp-tag-zoneall { background: rgba(156,163,155,0.10); color: var(--cream-dim); border-color: rgba(156,163,155,0.3); }
 
   .fp-preview-note {
     font-family: 'Lora', Georgia, serif;
-    font-size: 13px;
-    font-weight: 300;
-    color: #a8c6a2;
-    line-height: 1.75;
+    font-size: 14px;
+    color: var(--cream);
+    line-height: 1.8;
   }
 
   .fp-preview-state {
+    font-family:'IBM Plex Mono',monospace;
     font-size: 12px;
-    color: #2a4a26;
-    text-align: center;
+    color: var(--cream-dim);
     padding: 24px 0;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.04em;
   }
 
   .fp-hidden { display: none; }
@@ -601,26 +578,26 @@
   </section>
 
   <!-- ============================================================
-       FIELD LOG PREVIEW BLOCK — restored
+       FIELD LOG PREVIEW — matches site section styling
        ============================================================
        Pulls the 3 most recent published entries from the same
        Experiment Observations CSV used by field-log.html. Only
        one place to update: the Google Sheet Publish column.
-       Fixed bug: loading message now correctly hides itself using
-       the fp-hidden class (was previously calling classList.add
-       ("hidden"), which doesn't exist in this stylesheet and left
-       the loading text stuck on screen).
        ============================================================ -->
-  <div class="fp-preview-wrap" id="field-log">
-    <div class="fp-preview-header">
-      <span class="fp-preview-title">Field log</span>
-      <a href="/field-log.html" class="fp-preview-link">view full log &rarr;</a>
+  <section id="field-log">
+    <div class="section-head">
+      <span class="section-title">Field Log</span>
+      <span class="section-note">What's happening out here</span>
     </div>
 
     <div id="fp-preview-feed"></div>
     <div id="fp-preview-loading" class="fp-preview-state">loading recent entries&hellip;</div>
     <div id="fp-preview-empty" class="fp-preview-state fp-hidden">no entries logged yet</div>
-  </div>
+
+    <a href="/field-log.html" class="archive-link fp-preview-link">
+      <span class="dot"></span> View full field log
+    </a>
+  </section>
 
   <section id="writing">
     <div class="section-head">
@@ -849,6 +826,8 @@
       "Zone 2": "fp-tag-zone2",
       "Zone 3": "fp-tag-zone3"
     };
+    // Zone 1 grey, Zone 2 blue, Zone 3 green — matches the site's
+    // zone color coding used everywhere else (dashboards, cards).
 
     function parseZones(zoneField) {
       const zones = [];
@@ -876,6 +855,9 @@
       }
       return zones.map(z => `<span class="${zoneTagClass[z]}">${z}</span>`).join("");
     }
+    // note: .fp-preview-tags span already sets the shared tag styling
+    // (font, padding, border-radius) so each fp-tag-zoneN class only
+    // needs to set color and background.
 
     Papa.parse(CSV_URL, {
       download: true,
@@ -886,12 +868,21 @@
         // this stylesheet. Now correctly uses fp-hidden.
         document.getElementById("fp-preview-loading").classList.add("fp-hidden");
 
+        // Trims whitespace from column headers before matching, since a
+        // trailing space on "Publish" broke this once before.
+        function getField(row, name) {
+          for (const key in row) {
+            if (key.trim() === name) return row[key];
+          }
+          return "";
+        }
+
         const entries = results.data
-          .filter(row => (row["Publish"] || "").trim().toUpperCase() === "Y")
+          .filter(row => (getField(row, "Publish") || "").trim().toUpperCase() === "Y")
           .map(row => ({
-            date: row["Date"] || "",
-            zones: parseZones(row["Zone"] || ""),
-            notes: row["Notes"] || row["Measurement / Value"] || ""
+            date: getField(row, "Date") || "",
+            zones: parseZones(getField(row, "Zone")),
+            notes: getField(row, "Notes") || getField(row, "Measurement / Value") || ""
           }))
           .filter(e => e.date && e.notes)
           .sort((a, b) => new Date(b.date) - new Date(a.date))
@@ -915,6 +906,8 @@
             </div>
           </div>
         `).join("");
+        // fp-preview-tags is styled once in CSS; each fp-tag-zoneN
+        // class layers on just the color and border for that zone.
       },
       error: function() {
         document.getElementById("fp-preview-loading").textContent =
