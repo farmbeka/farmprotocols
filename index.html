@@ -384,34 +384,76 @@
     letter-spacing:0.04em;
   }
 
-  /* ---------- FIELD LOG PREVIEW (matches site section styling) ---------- */
+  /* ---------- FIELD LOG (standalone card, matches zone-card style) ---------- */
+  .fp-card {
+    background: var(--bg-soft-2);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 28px 30px;
+    margin-bottom: 8px;
+  }
+
+  .fp-card-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    margin-bottom: 22px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--line);
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .fp-card-title {
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 700;
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    color: var(--cream);
+    text-transform: uppercase;
+  }
+
   .fp-preview-link {
     font-family:'IBM Plex Mono',monospace;
-    font-size:12px;
-    color:var(--green);
+    font-size:11.5px;
+    color: var(--green);
     letter-spacing:0.04em;
     text-decoration:none;
+    white-space: nowrap;
   }
-  .fp-preview-link:hover{color:var(--cream);}
+  .fp-preview-link:hover{ color: var(--cream); }
 
   .fp-preview-entry {
     display: flex;
-    gap: 20px;
-    padding: 18px 0;
-    border-bottom: 1px solid var(--line);
+    gap: 16px;
   }
-  .fp-preview-entry:last-child{ border-bottom: none; }
 
-  .fp-preview-datecol { min-width: 70px; flex-shrink: 0; }
+  .fp-connector {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 5px;
+    flex-shrink: 0;
+  }
+
+  .fp-dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
+  .fp-dot-zone1 { background: var(--cream-dim); }
+  .fp-dot-zone2 { background: var(--blue); }
+  .fp-dot-zone3 { background: var(--green); }
+  .fp-dot-multi { background: var(--cream-dim); }
+
+  .fp-thread-line { width: 1px; background: var(--line-strong); flex: 1; margin-top: 4px; min-height: 24px; }
+
+  .fp-preview-datecol { min-width: 66px; flex-shrink: 0; padding-top: 0; }
   .fp-preview-date {
     font-family:'IBM Plex Mono',monospace;
-    font-size: 11px;
-    color: var(--cream-dim);
-    letter-spacing: 0.03em;
+    font-size: 10.5px;
+    color: var(--gold);
+    letter-spacing: 0.04em;
     line-height: 1.5;
   }
 
-  .fp-preview-body { flex: 1; min-width: 0; }
+  .fp-preview-body { flex: 1; min-width: 0; padding-bottom: 20px; }
 
   .fp-preview-tags {
     display: flex;
@@ -422,7 +464,7 @@
 
   .fp-preview-tags span{
     font-family:'IBM Plex Mono',monospace;
-    font-size: 10px;
+    font-size: 9.5px;
     letter-spacing: 0.08em;
     text-transform: uppercase;
     padding: 3px 9px;
@@ -443,13 +485,17 @@
 
   .fp-preview-state {
     font-family:'IBM Plex Mono',monospace;
-    font-size: 12px;
+    font-size: 11.5px;
     color: var(--cream-dim);
-    padding: 24px 0;
+    padding: 20px 0;
     letter-spacing: 0.04em;
   }
 
   .fp-hidden { display: none; }
+
+  @media (max-width:600px){
+    .fp-card{ padding:22px 20px; }
+  }
 </style>
 </head>
 <body>
@@ -552,6 +598,26 @@
     </p>
   </section>
 
+  <!-- ============================================================
+       FIELD LOG — standalone light card, positioned above Live Data
+       ============================================================
+       Pulls the 3 most recent published entries from the same
+       Experiment Observations CSV used by field-log.html. Only
+       one place to update: the Google Sheet Publish column.
+       ============================================================ -->
+  <section id="field-log">
+    <div class="fp-card">
+      <div class="fp-card-header">
+        <span class="fp-card-title">Field Log</span>
+        <a href="/field-log.html" class="fp-preview-link">view full log &rarr;</a>
+      </div>
+
+      <div id="fp-preview-feed"></div>
+      <div id="fp-preview-loading" class="fp-preview-state">loading recent entries&hellip;</div>
+      <div id="fp-preview-empty" class="fp-preview-state fp-hidden">no entries logged yet</div>
+    </div>
+  </section>
+
   <section id="live-data">
     <div class="section-head">
       <span class="section-title">Live Data</span>
@@ -574,28 +640,6 @@
 
     <a class="archive-link" href="https://farmprotocols.notion.site/The-Project-3572cd42c7a58014af4ae09a7ac8936e" target="_blank" rel="noopener">
       <span class="dot"></span> Project overview
-    </a>
-  </section>
-
-  <!-- ============================================================
-       FIELD LOG PREVIEW — matches site section styling
-       ============================================================
-       Pulls the 3 most recent published entries from the same
-       Experiment Observations CSV used by field-log.html. Only
-       one place to update: the Google Sheet Publish column.
-       ============================================================ -->
-  <section id="field-log">
-    <div class="section-head">
-      <span class="section-title">Field Log</span>
-      <span class="section-note">What's happening out here</span>
-    </div>
-
-    <div id="fp-preview-feed"></div>
-    <div id="fp-preview-loading" class="fp-preview-state">loading recent entries&hellip;</div>
-    <div id="fp-preview-empty" class="fp-preview-state fp-hidden">no entries logged yet</div>
-
-    <a href="/field-log.html" class="archive-link fp-preview-link">
-      <span class="dot"></span> View full field log
     </a>
   </section>
 
@@ -859,6 +903,16 @@
     // (font, padding, border-radius) so each fp-tag-zoneN class only
     // needs to set color and background.
 
+    const zoneDotClass = {
+      "Zone 1": "fp-dot-zone1",
+      "Zone 2": "fp-dot-zone2",
+      "Zone 3": "fp-dot-zone3"
+    };
+    function renderDot(zones) {
+      if (zones.length !== 1) return "fp-dot-multi";
+      return zoneDotClass[zones[0]];
+    }
+
     Papa.parse(CSV_URL, {
       download: true,
       header: true,
@@ -895,8 +949,12 @@
           return;
         }
 
-        feed.innerHTML = entries.map(e => `
+        feed.innerHTML = entries.map((e, i) => `
           <div class="fp-preview-entry">
+            <div class="fp-connector">
+              <div class="fp-dot ${renderDot(e.zones)}"></div>
+              ${i < entries.length - 1 ? '<div class="fp-thread-line"></div>' : ''}
+            </div>
             <div class="fp-preview-datecol">
               <div class="fp-preview-date">${formatDate(e.date)}</div>
             </div>
